@@ -1,2 +1,2 @@
 # response-factory
-Golang library for creating http response structs
+Library for creating http response structs in Golang
