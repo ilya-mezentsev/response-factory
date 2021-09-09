@@ -1,6 +1,13 @@
 package response_factory
 
-import "github.com/ilya-mezentsev/response-factory/responses"
+import (
+	"net/http"
+)
+
+const (
+	statusOk    = "ok"
+	statusError = "error"
+)
 
 type Response interface {
 	HttpStatus() int
@@ -9,16 +16,49 @@ type Response interface {
 	Data() interface{}
 }
 
+type defaultResponse struct {
+	httpStatus        int
+	applicationStatus string
+	data              interface{}
+}
+
+func (r defaultResponse) HttpStatus() int {
+	return r.httpStatus
+}
+
+func (r defaultResponse) ApplicationStatus() string {
+	return r.applicationStatus
+}
+
+func (r defaultResponse) HasData() bool {
+	return r.data != nil
+}
+
+func (r defaultResponse) Data() interface{} {
+	return r.data
+}
+
 func DefaultResponse() Response {
-	return responses.DefaultResponse{}
+	return defaultResponse{
+		httpStatus:        http.StatusNoContent,
+		applicationStatus: statusOk,
+	}
 }
 
 func SuccessResponse(data interface{}) Response {
-	return responses.SuccessResponse{DefaultResponse: responses.DefaultResponse{D: data}}
+	return defaultResponse{
+		httpStatus:        http.StatusOK,
+		applicationStatus: statusOk,
+		data:              data,
+	}
 }
 
 func ServerError(data interface{}) Response {
-	return responses.ServerErrorResponse{DefaultResponse: responses.DefaultResponse{D: data}}
+	return defaultResponse{
+		httpStatus:        http.StatusInternalServerError,
+		applicationStatus: statusError,
+		data:              data,
+	}
 }
 
 func EmptyServerError() Response {
@@ -26,7 +66,11 @@ func EmptyServerError() Response {
 }
 
 func ClientError(data interface{}) Response {
-	return responses.ClientErrorResponse{DefaultResponse: responses.DefaultResponse{D: data}}
+	return defaultResponse{
+		httpStatus:        http.StatusBadRequest,
+		applicationStatus: statusError,
+		data:              data,
+	}
 }
 
 func EmptyClientError() Response {
@@ -34,9 +78,17 @@ func EmptyClientError() Response {
 }
 
 func ForbiddenError(data interface{}) Response {
-	return responses.ForbiddenErrorResponse{DefaultResponse: responses.DefaultResponse{D: data}}
+	return defaultResponse{
+		httpStatus:        http.StatusForbidden,
+		applicationStatus: statusError,
+		data:              data,
+	}
 }
 
 func UnauthorizedError(data interface{}) Response {
-	return responses.UnauthorizedErrorResponse{DefaultResponse: responses.DefaultResponse{D: data}}
+	return defaultResponse{
+		httpStatus:        http.StatusUnauthorized,
+		applicationStatus: statusError,
+		data:              data,
+	}
 }
