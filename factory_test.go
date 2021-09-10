@@ -7,78 +7,78 @@ import (
 )
 
 func TestDefaultResponse(t *testing.T) {
-	response := DefaultResponse()
+	r := DefaultResponse()
 
-	assert.Equal(t, statusOk, response.ApplicationStatus())
-	assert.False(t, response.HasData())
-	assert.Equal(t, http.StatusNoContent, response.HttpStatus())
-	assert.Nil(t, response.Data())
+	assert.True(t, r.IsOk())
+	assert.False(t, r.HasData())
+	assert.Equal(t, http.StatusNoContent, r.HttpStatus())
+	assert.Nil(t, r.Data())
 }
 
 func TestSuccessResponse(t *testing.T) {
 	someData := `data`
-	response := SuccessResponse(someData)
+	r := SuccessResponse(someData)
 
-	assert.Equal(t, statusOk, response.ApplicationStatus())
-	assert.True(t, response.HasData())
-	assert.Equal(t, http.StatusOK, response.HttpStatus())
-	assert.Equal(t, someData, response.Data())
+	assert.True(t, r.IsOk())
+	assert.True(t, r.HasData())
+	assert.Equal(t, http.StatusOK, r.HttpStatus())
+	assert.Equal(t, someData, r.Data())
 }
 
 func TestServerErrorResponse(t *testing.T) {
 	someData := `data`
-	response := ServerError(someData)
+	r := ServerError(someData)
 
-	assert.Equal(t, statusError, response.ApplicationStatus())
-	assert.True(t, response.HasData())
-	assert.Equal(t, http.StatusInternalServerError, response.HttpStatus())
-	assert.Equal(t, someData, response.Data())
+	assert.False(t, r.IsOk())
+	assert.True(t, r.HasData())
+	assert.Equal(t, http.StatusInternalServerError, r.HttpStatus())
+	assert.Equal(t, someData, r.Data())
 }
 
 func TestClientErrorResponse(t *testing.T) {
 	someData := `data`
-	response := ClientError(someData)
+	r := ClientError(someData)
 
-	assert.Equal(t, statusError, response.ApplicationStatus())
-	assert.True(t, response.HasData())
-	assert.Equal(t, http.StatusBadRequest, response.HttpStatus())
-	assert.Equal(t, someData, response.Data())
+	assert.False(t, r.IsOk())
+	assert.True(t, r.HasData())
+	assert.Equal(t, http.StatusBadRequest, r.HttpStatus())
+	assert.Equal(t, someData, r.Data())
 }
 
 func TestEmptyClientError(t *testing.T) {
-	response := EmptyClientError()
+	r := EmptyClientError()
 
-	assert.Equal(t, statusError, response.ApplicationStatus())
-	assert.False(t, response.HasData())
-	assert.Equal(t, http.StatusBadRequest, response.HttpStatus())
-	assert.Nil(t, response.Data())
+	assert.False(t, r.IsOk())
+	assert.False(t, r.HasData())
+	assert.Equal(t, http.StatusBadRequest, r.HttpStatus())
+	assert.Nil(t, r.Data())
 }
 
 func TestForbiddenErrorResponse(t *testing.T) {
 	someData := `data`
-	response := ForbiddenError(someData)
+	r := ForbiddenError(someData)
 
-	assert.Equal(t, statusError, response.ApplicationStatus())
-	assert.True(t, response.HasData())
-	assert.Equal(t, http.StatusForbidden, response.HttpStatus())
-	assert.Equal(t, someData, response.Data())
+	assert.False(t, r.IsOk())
+	assert.True(t, r.HasData())
+	assert.Equal(t, http.StatusForbidden, r.HttpStatus())
+	assert.Equal(t, someData, r.Data())
 }
 
 func TestUnauthorizedErrorResponse(t *testing.T) {
 	someData := `data`
-	response := UnauthorizedError(someData)
+	r := UnauthorizedError(someData)
 
-	assert.Equal(t, statusError, response.ApplicationStatus())
-	assert.True(t, response.HasData())
-	assert.Equal(t, http.StatusUnauthorized, response.HttpStatus())
-	assert.Equal(t, someData, response.Data())
+	assert.False(t, r.IsOk())
+	assert.True(t, r.HasData())
+	assert.Equal(t, http.StatusUnauthorized, r.HttpStatus())
+	assert.Equal(t, someData, r.Data())
 }
 
 func TestEmptyServerError(t *testing.T) {
-	response := EmptyServerError()
+	r := EmptyServerError()
 
-	assert.Equal(t, statusError, response.ApplicationStatus())
-	assert.False(t, response.HasData())
-	assert.Equal(t, http.StatusInternalServerError, response.HttpStatus())
-	assert.Nil(t, response.Data())
+	assert.False(t, r.IsOk())
+	assert.False(t, r.HasData())
+	assert.Equal(t, http.StatusInternalServerError, r.HttpStatus())
+	assert.Nil(t, r.Data())
 }

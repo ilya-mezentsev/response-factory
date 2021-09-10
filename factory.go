@@ -4,60 +4,54 @@ import (
 	"net/http"
 )
 
-const (
-	statusOk    = "ok"
-	statusError = "error"
-)
-
 type Response interface {
 	HttpStatus() int
-	ApplicationStatus() string
+	IsOk() bool
 	HasData() bool
 	Data() interface{}
 }
 
-type defaultResponse struct {
-	httpStatus        int
-	applicationStatus string
-	data              interface{}
+type response struct {
+	httpStatus int
+	isOk       bool
+	data       interface{}
 }
 
-func (r defaultResponse) HttpStatus() int {
+func (r response) HttpStatus() int {
 	return r.httpStatus
 }
 
-func (r defaultResponse) ApplicationStatus() string {
-	return r.applicationStatus
+func (r response) IsOk() bool {
+	return r.isOk
 }
 
-func (r defaultResponse) HasData() bool {
+func (r response) HasData() bool {
 	return r.data != nil
 }
 
-func (r defaultResponse) Data() interface{} {
+func (r response) Data() interface{} {
 	return r.data
 }
 
 func DefaultResponse() Response {
-	return defaultResponse{
-		httpStatus:        http.StatusNoContent,
-		applicationStatus: statusOk,
+	return response{
+		httpStatus: http.StatusNoContent,
+		isOk:       true,
 	}
 }
 
 func SuccessResponse(data interface{}) Response {
-	return defaultResponse{
-		httpStatus:        http.StatusOK,
-		applicationStatus: statusOk,
-		data:              data,
+	return response{
+		httpStatus: http.StatusOK,
+		isOk:       true,
+		data:       data,
 	}
 }
 
 func ServerError(data interface{}) Response {
-	return defaultResponse{
-		httpStatus:        http.StatusInternalServerError,
-		applicationStatus: statusError,
-		data:              data,
+	return response{
+		httpStatus: http.StatusInternalServerError,
+		data:       data,
 	}
 }
 
@@ -66,10 +60,9 @@ func EmptyServerError() Response {
 }
 
 func ClientError(data interface{}) Response {
-	return defaultResponse{
-		httpStatus:        http.StatusBadRequest,
-		applicationStatus: statusError,
-		data:              data,
+	return response{
+		httpStatus: http.StatusBadRequest,
+		data:       data,
 	}
 }
 
@@ -78,17 +71,15 @@ func EmptyClientError() Response {
 }
 
 func ForbiddenError(data interface{}) Response {
-	return defaultResponse{
-		httpStatus:        http.StatusForbidden,
-		applicationStatus: statusError,
-		data:              data,
+	return response{
+		httpStatus: http.StatusForbidden,
+		data:       data,
 	}
 }
 
 func UnauthorizedError(data interface{}) Response {
-	return defaultResponse{
-		httpStatus:        http.StatusUnauthorized,
-		applicationStatus: statusError,
-		data:              data,
+	return response{
+		httpStatus: http.StatusUnauthorized,
+		data:       data,
 	}
 }
